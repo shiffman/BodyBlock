@@ -6,7 +6,7 @@ const Header = () => {
   return html`
     <header class="header">
       <h1>BodyBlock</h1>
-      <p>A tool to blur out people's faces in video</p>
+      <p>A tool to blur out peoples' faces in video</p>
     </header>
   `;
 };
