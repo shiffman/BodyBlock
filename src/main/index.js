@@ -60,7 +60,9 @@ app.on('activate', () => {
 app.on('ready', () => {
   mainWindow = createMainWindow();
 
-
+  /**
+   * OPEN FILE UPLOAD TO SELECT VIDEO TO BLUR
+   */
   ipcMain.on('OPEN_FILE_UPLOAD', async (event, arg) => {
     try{
       console.log(arg) // prints "ping"
@@ -71,17 +73,25 @@ app.on('ready', () => {
     } catch(err){
       event.reply('OPEN_FILE_UPLOAD_ERR', 'ERR OCCURRED!');
     }
-    
-
-  })
+  });
   
-  ipcMain.on('synchronous-message', (event, arg) => {
-    console.log(arg) // prints "ping"
-    event.returnValue = 'pong'
+
+  /**
+   * PROCESS SELECTED VIDEO
+   * arg will be the videoPath 
+   */
+  ipcMain.on('PROCESS_VIDEO', async(event, arg) => {
+    // console.log(arg) // prints "ping"
+    // event.returnValue = 'pong'
+    try {
+      console.log('processing selected video: ', arg)
+      // event.reply('OPEN_FILE_UPLOAD', result);
+    } catch (error) {
+      event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
+    }
+
   })
 
 
-  // document.body.querySelector("#app").addEventListener('click', () => {
-  //   console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))
-  // })
+  
 })
