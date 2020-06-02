@@ -1,13 +1,25 @@
 const ffmpeg = require('ffmpeg-static');
-console.log(ffmpeg);
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
+const fs = require('fs');
+
 // const shellescape = require('any-shell-escape');
 
-writeFrames('test/Crowd-6582.mp4');
+processVideo('test/Crowd-6582.mp4');
 
-async function writeFrames(file) {
-  const command = `ffmpeg -i ${file} frames/out-%03d.jpg`;
-  const response = await exec(command);
-  console.log(response);
+async function processVideo(file) {
+  // Make the directory
+  fs.mkdirSync('frames');
+
+  // unpack frames
+  const command1 = `ffmpeg -i ${file} -qscale:v 2 frames/out%03d.jpg`;
+  const response1 = await exec(command1);
+  console.log(response1);
+
+  // Apply obfuscation
+
+  // repack frames
+  const command2 = `ffmpeg -start_number 0 -i 'frames/out%3d.jpg' out.mp4`;
+  const response2 = await exec(command2);
+  console.log(response2);
 }
