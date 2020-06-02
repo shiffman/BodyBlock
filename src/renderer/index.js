@@ -4,42 +4,77 @@ const html = require("nanohtml");
 const tf = require("@tensorflow/tfjs");
 const bp = require("@tensorflow-models/body-pix");
 
-const Navbar = require("common/Navbar");
+// App components
+const Footer = require("common/Footer");
+const Header = require("common/Header");
 
+// Main style
 require("./index.scss");
 
 const App = () => {
+  const state = {
+    videoFile: null,
+    status: "not started", // 'not started', 'processing', 'done'
+  };
+
+  const saveFile = (evt) => {
+    console.log("save file!");
+  };
+
+  const handleFileUpload = (evt) => {
+    evt.preventDefault();
+    console.log(evt);
+  };
+
   return html`
     <div class="home">
-      <header class="header">
-        <h1>BodyBlock</h1>
-        <p>A tool to blur out people's faces in video</p>
-      </header>
+      ${Header()}
       <main class="main">
         <section class="main-section">
           <h2 class="main-section__title">Add your video</h2>
           <div class="main-section__content">
-            <input type="file" id="file-upload" />
+            <form
+              class="form"
+              id="file-upload-form"
+              onsubmit=${handleFileUpload}
+            >
+              <input
+                class="form__input"
+                type="file"
+                id="file-upload"
+                name="filename"
+              />
+              <input
+                class="form__input"
+                type="submit"
+                value="Start Processing →"
+                class="button"
+              />
+            </form>
           </div>
         </section>
         <section class="main-section">
           <h2 class="main-section__title">Blur the faces</h2>
           <div class="main-section__content">
-            <canvas
-              id="main-canvas"
-            ></canvas>
+            <canvas id="main-canvas"></canvas>
           </div>
         </section>
         <section class="main-section">
           <h2 class="main-section__title">Download video</h2>
           <div class="main-section__content">
-            <button class="button button--save" id="save-button">Save 💾</button>
+            <p>status: <span>${state.status}</span></p>
+            <button
+              onclick=${saveFile}
+              class="button button--save"
+              id="save-button"
+            >
+              Save 💾
+            </button>
           </div>
         </section>
       </main>
-      <footer class="footer">
-        ${Navbar()}
-      </footer>
+      <!-- Bottom footer -->
+      ${Footer()}
     </div>
   `;
 };

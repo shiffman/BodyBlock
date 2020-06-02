@@ -21,18 +21,6 @@ body{
 
 }
 
-.header{
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  height:6rem;
-  border: 2px solid black;
-  margin-bottom: 2rem;
-  box-shadow: 4px 4px 0px black;
-}
-
 .main{
   display:grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -72,8 +60,6 @@ canvas{
   box-shadow: 2px 2px 0px black;
 }
 
-#file-upload{
-  display:inline-block;
-  margin:0 auto;
-  width:50%;
+input{
+  display:block;
 }
