@@ -1,14 +1,27 @@
 {
-  "name": "ffmpeg-testing",
+  "name": "BodyBlock",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "license": "MIT",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "electron-webpack dev",
+    "compile": "electron-webpack",
+    "dist": "yarn compile && electron-builder",
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "ffmpeg-static": "^4.2.2"
+    "@tensorflow-models/body-pix": "^2.0.5",
+    "@tensorflow/tfjs": "1.2",
+    "ffmpeg-static": "^4.2.2",
+    "nanohtml": "^1.9.1",
+    "p5": "^1.0.0",
+    "source-map-support": "^0.5.16"
+  },
+  "devDependencies": {
+    "electron": "8.2.0",
+    "electron-builder": "^22.4.1",
+    "electron-webpack": "^2.8.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2",
+    "webpack": "~4.42.1"
   }
 }

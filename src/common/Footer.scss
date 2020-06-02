@@ -1,0 +1,25 @@
+.footer{
+  border: 2px solid black;
+  box-shadow: 4px 4px 0px black;
+  padding: 0.5rem;
+  margin-top: 2rem;
+  
+  &__list{
+    display:flex;
+    list-style: none;
+    justify-content: space-between;
+
+    &-section{
+      display: flex;
+    
+    }
+
+    &-item{
+      border-bottom:2px solid black;
+
+      &:not(:last-child){
+        margin-right:0.5rem;
+      }
+    }
+  }
+}
