@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain } from 'electron'
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 
@@ -58,7 +58,30 @@ app.on('activate', () => {
 
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
-  mainWindow = createMainWindow()
+  mainWindow = createMainWindow();
 
+
+  ipcMain.on('OPEN_FILE_UPLOAD', async (event, arg) => {
+    try{
+      console.log(arg) // prints "ping"
+      // event.reply('asynchronous-reply', 'pong')
+      const result = await dialog.showOpenDialog({ properties: ['openFile'] });
+      console.log(result);
+      event.reply('OPEN_FILE_UPLOAD', result);
+    } catch(err){
+      event.reply('OPEN_FILE_UPLOAD_ERR', 'ERR OCCURRED!');
+    }
+    
+
+  })
   
+  ipcMain.on('synchronous-message', (event, arg) => {
+    console.log(arg) // prints "ping"
+    event.returnValue = 'pong'
+  })
+
+
+  // document.body.querySelector("#app").addEventListener('click', () => {
+  //   console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))
+  // })
 })
