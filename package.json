@@ -11,6 +11,7 @@
   "dependencies": {
     "@tensorflow-models/body-pix": "^2.0.5",
     "@tensorflow/tfjs": "1.2",
+    "ffmpeg-static": "^4.2.2",
     "nanohtml": "^1.9.1",
     "p5": "^1.0.0",
     "source-map-support": "^0.5.16"
