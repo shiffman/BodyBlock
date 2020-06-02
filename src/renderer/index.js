@@ -23,7 +23,8 @@ const App = () => {
 
   const handleFileUpload = (evt) => {
     evt.preventDefault();
-    console.log(evt);
+    console.log(evt, evt.target.filename.files[0].path);
+    // pass the path on to node fs?
   };
 
   return html`
