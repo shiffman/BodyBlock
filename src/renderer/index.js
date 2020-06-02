@@ -3,6 +3,7 @@
 const html = require("nanohtml");
 const tf = require("@tensorflow/tfjs");
 const bp = require("@tensorflow-models/body-pix");
+const p5 = require("p5");
 
 // App components
 const Footer = require("common/Footer");
@@ -11,73 +12,125 @@ const Header = require("common/Header");
 // Main style
 require("./index.scss");
 
-const App = () => {
-  const state = {
-    videoFile: null,
-    status: "not started", // 'not started', 'processing', 'done'
-  };
+class App {
+  constructor(bodyPix) {
+    this.videoFile = null;
+    this.videoPath = null;
+    this.bodyPix = bodyPix;
+    this.status = "not started"; // 'not started', 'processing', 'done'
+  }
 
-  const saveFile = (evt) => {
+  /**
+   * save file
+   * @param {Object} evt
+   */
+  saveFile(evt) {
     console.log("save file!");
-  };
+  }
 
-  const handleFileUpload = (evt) => {
+  /**
+   * Callback function that handles the file upload
+   * @param {Object} evt
+   */
+  handleFileUpload(evt) {
     evt.preventDefault();
     console.log(evt, evt.target.filename.files[0].path);
     // pass the path on to node fs?
-  };
+    this.videoPath = evt.target.filename.files[0].path;
 
-  return html`
-    <div class="home">
-      ${Header()}
-      <main class="main">
-        <section class="main-section">
-          <h2 class="main-section__title">Add your video</h2>
-          <div class="main-section__content">
-            <form
-              class="form"
-              id="file-upload-form"
-              onsubmit=${handleFileUpload}
-            >
-              <input
-                class="form__input"
-                type="file"
-                id="file-upload"
-                name="filename"
-              />
-              <input
-                class="form__input"
-                type="submit"
-                value="Start Processing →"
-                class="button"
-              />
-            </form>
-          </div>
-        </section>
-        <section class="main-section">
-          <h2 class="main-section__title">Blur the faces</h2>
-          <div class="main-section__content">
-            <canvas id="main-canvas"></canvas>
-          </div>
-        </section>
-        <section class="main-section">
-          <h2 class="main-section__title">Download video</h2>
-          <div class="main-section__content">
-            <p>status: <span>${state.status}</span></p>
-            <button
-              onclick=${saveFile}
-              class="button button--save"
-              id="save-button"
-            >
-              Save 💾
-            </button>
-          </div>
-        </section>
-      </main>
-      <!-- Bottom footer -->
-      ${Footer()}
-    </div>
-  `;
-};
+    this.createSketch();
+  }
 
-document.querySelector("#app").appendChild(App());
+  /**
+   * p5 sketch for showing
+   * @param {*} p
+   */
+  sketch(p) {
+    let video;
+
+    p.setup = () => {
+      const parentContainer = document.querySelector("#main-canvas-container");
+      const w = parentContainer.clientWidth;
+      const h = parentContainer.clientHeight;
+      p.createCanvas(w, h);
+      console.log(this.videoPath);
+
+      video = p.createVideo(this.videoPath, (video) => {
+        console.log(video)
+      });
+    };
+  }
+
+  createSketch() {
+    const p5Sketch = new p5(this.sketch.bind(this), "main-canvas-container");
+  }
+
+  render() {
+    const dom = html`
+      <div class="home">
+        ${Header()}
+        <main class="main">
+          <section class="main-section">
+            <h2 class="main-section__title">Add your video</h2>
+            <div class="main-section__content">
+              <form
+                class="form"
+                id="file-upload-form"
+                onsubmit=${this.handleFileUpload.bind(this)}
+              >
+                <input
+                  class="form__input"
+                  type="file"
+                  id="file-upload"
+                  name="filename"
+                />
+                <input
+                  class="form__input"
+                  type="submit"
+                  value="Start Processing →"
+                  class="button"
+                />
+              </form>
+            </div>
+          </section>
+          <section class="main-section">
+            <h2 class="main-section__title">Blur the faces</h2>
+            <div class="main-section__content">
+              <div id="main-canvas-container"></div>
+            </div>
+          </section>
+          <section class="main-section">
+            <h2 class="main-section__title">Download video</h2>
+            <div class="main-section__content">
+              <p>status: <span>${this.status}</span></p>
+              <button
+                onclick=${this.saveFile}
+                class="button button--save"
+                id="save-button"
+              >
+                Save 💾
+              </button>
+            </div>
+          </section>
+        </main>
+        <!-- Bottom footer -->
+        ${Footer()}
+      </div>
+    `;
+
+    document.querySelector("#app").append(dom);
+  }
+}
+
+// main app
+window.addEventListener("DOMContentLoaded", async () => {
+  const bodyPix = await bp.load({
+    architecture: "MobileNetV1",
+    outputStride: 16,
+    multiplier: 0.75,
+    quantBytes: 2,
+  });
+
+  const app = new App(bodyPix);
+  app.render();
+});
