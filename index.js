@@ -14,14 +14,14 @@ async function processVideo(file) {
   }
 
   // unpack frames
-  const command1 = `ffmpeg -i ${file} -qscale:v 2 frames/out%03d.jpg`;
+  const command1 = `${__dirname}/node_modules/ffmpeg-static/ffmpeg -i ${file} -qscale:v 2 frames/out%03d.jpg`;
   const response1 = await exec(command1);
   console.log(response1);
 
   // Apply obfuscation
 
   // repack frames
-  const command2 = `ffmpeg -y -start_number 0 -i 'frames/out%3d.jpg' out.mp4`;
+  const command2 = `${__dirname}/node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i 'frames/out%3d.jpg' out.mp4`;
   const response2 = await exec(command2);
   console.log(response2);
 }

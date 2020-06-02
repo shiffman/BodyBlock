@@ -1,6 +1,9 @@
 'use strict'
 
 import { app, BrowserWindow, dialog, ipcMain } from 'electron'
+import {processVideo,
+  unpackVideoToFrames,
+  packVideoFromFrames} from 'common/processVideo';
 import * as path from 'path'
 import { format as formatUrl } from 'url'
 
@@ -85,6 +88,7 @@ app.on('ready', () => {
     // event.returnValue = 'pong'
     try {
       console.log('processing selected video: ', arg)
+      processVideo(arg);
       // event.reply('OPEN_FILE_UPLOAD', result);
     } catch (error) {
       event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
