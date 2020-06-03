@@ -30,10 +30,10 @@ async function unpackVideoToFrames(file, dir = "frames") {
 
 async function packVideoFromFrames(dir = "frames") {
   try {
-    const command2 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i '${dir}/out%3d.jpg' out.mp4`;
+    const command2 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i '${dir}/out%03d.jpg' .out.mp4`;
     const response2 = await exec(command2);
     console.log(response2);
-    // TODO RETURN TOTAL NUMBER OF FRAMES HERE
+    await exec(`mv .out.mp4 out.mp4`);
     return {
       path: 'out.mp4'
     }
