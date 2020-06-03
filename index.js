@@ -20,8 +20,11 @@ async function processVideo(file) {
 
   // Apply obfuscation
 
-  // repack frames
-  const command2 = `${__dirname}/node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i 'frames/out%3d.jpg' out.mp4`;
+  // repack frames (hide the file until repacking is done)
+  const command2 = `${__dirname}/node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i 'frames/out%03d.jpg' .out.mp4`;
   const response2 = await exec(command2);
+
+  // Make the file visible on Unix-based systems
+  await exec(`mv .out.mp4 out.mp4`);
   console.log(response2);
 }
