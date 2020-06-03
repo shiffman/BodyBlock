@@ -6,7 +6,7 @@ const fs = require("fs");
 // const shellescape = require('any-shell-escape');
 // processVideo('test/Crowd-6582.mp4');
 
-async function unpackVideoToFrames(file, dir="frames") {
+async function unpackVideoToFrames(file, dir = "frames") {
   try {
     // Make the directory
     if (!fs.existsSync(dir)) {
@@ -17,19 +17,26 @@ async function unpackVideoToFrames(file, dir="frames") {
     const command1 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -i ${file} -qscale:v 2 ${dir}/out%03d.jpg`;
     const response1 = await exec(command1);
     console.log(response1);
-    return true;
+    return {
+      path: `${dir}/out%3d.jpg`,
+      // TODO RETURN TOTAL NUMBER OF FRAMES HERE
+      totalFrames: 10
+    }
   } catch (error) {
     console.error(error);
     return false;
   }
 }
 
-async function packVideoFromFrames(dir="frames") {
+async function packVideoFromFrames(dir = "frames") {
   try {
     const command2 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i '${dir}/out%3d.jpg' out.mp4`;
     const response2 = await exec(command2);
     console.log(response2);
-    return true;
+    // TODO RETURN TOTAL NUMBER OF FRAMES HERE
+    return {
+      path: 'out.mp4'
+    }
   } catch (error) {
     console.error(error);
     return false;
@@ -42,7 +49,7 @@ async function processVideo(file) {
   // Apply obfuscation
 
   // repack frames
-  await packVideoFromFrames()
+  return await packVideoFromFrames();
 }
 
 module.exports = {

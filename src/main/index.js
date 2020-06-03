@@ -1,11 +1,21 @@
 'use strict'
 
-import { app, BrowserWindow, dialog, ipcMain } from 'electron'
-import {processVideo,
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  ipcMain
+} from 'electron'
+import {
+  processVideo,
   unpackVideoToFrames,
-  packVideoFromFrames} from 'common/processVideo';
+  packVideoFromFrames
+} from 'common/processVideo';
 import * as path from 'path'
-import { format as formatUrl } from 'url'
+import {
+  format as formatUrl
+} from 'url'
+import fs from 'fs'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -13,7 +23,11 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 let mainWindow
 
 function createMainWindow() {
-  const window = new BrowserWindow({webPreferences: {nodeIntegration: true}})
+  const window = new BrowserWindow({
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
 
   if (isDevelopment) {
     window.webContents.openDevTools()
@@ -21,8 +35,7 @@ function createMainWindow() {
 
   if (isDevelopment) {
     window.loadURL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}`)
-  }
-  else {
+  } else {
     window.loadURL(formatUrl({
       pathname: path.join(__dirname, 'index.html'),
       protocol: 'file',
@@ -62,34 +75,42 @@ app.on('activate', () => {
 // create main BrowserWindow when electron is ready
 app.on('ready', () => {
   mainWindow = createMainWindow();
+  console.log("GO");
 
   /**
    * OPEN FILE UPLOAD TO SELECT VIDEO TO BLUR
    */
   ipcMain.on('OPEN_FILE_UPLOAD', async (event, arg) => {
-    try{
+    try {
       console.log(arg) // prints "ping"
       // event.reply('asynchronous-reply', 'pong')
-      const result = await dialog.showOpenDialog({ properties: ['openFile'] });
+      const result = await dialog.showOpenDialog({
+        properties: ['openFile']
+      });
       console.log(result);
       event.reply('OPEN_FILE_UPLOAD', result);
-    } catch(err){
+    } catch (err) {
       event.reply('OPEN_FILE_UPLOAD_ERR', 'ERR OCCURRED!');
     }
   });
-  
+
 
   /**
    * PROCESS SELECTED VIDEO
    * arg will be the videoPath 
    */
-  ipcMain.on('PROCESS_VIDEO', async(event, arg) => {
+  ipcMain.on('PROCESS_VIDEO', async (event, arg) => {
     // console.log(arg) // prints "ping"
     // event.returnValue = 'pong'
     try {
       console.log('processing selected video: ', arg)
-      processVideo(arg);
-      // event.reply('OPEN_FILE_UPLOAD', result);
+      const results = await unpackVideoToFrames(arg);
+      console.log(results);
+      const imgb64 = fs.readFileSync('frames/out001.jpg', {
+        encoding: 'base64'
+      });
+      console.log(imgb64);
+      event.reply('FRAMES_READY', imgb64);
     } catch (error) {
       event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
     }
@@ -97,5 +118,5 @@ app.on('ready', () => {
   })
 
 
-  
+
 })
