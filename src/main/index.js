@@ -15,7 +15,6 @@ import * as path from 'path'
 import {
   format as formatUrl
 } from 'url'
-import fs from 'fs'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -103,14 +102,9 @@ app.on('ready', () => {
     // console.log(arg) // prints "ping"
     // event.returnValue = 'pong'
     try {
-      console.log('processing selected video: ', arg)
+      console.log('processing selected video: ', arg);
       const results = await unpackVideoToFrames(arg);
-      console.log(results);
-      const imgb64 = fs.readFileSync('frames/out001.jpg', {
-        encoding: 'base64'
-      });
-      console.log(imgb64);
-      event.reply('FRAMES_READY', imgb64);
+      event.reply('FRAMES_READY', arg);
     } catch (error) {
       event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
     }
