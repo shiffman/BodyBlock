@@ -104,7 +104,7 @@ app.on('ready', () => {
     try {
       console.log('processing selected video: ', arg);
       const results = await unpackVideoToFrames(arg);
-      event.reply('FRAMES_READY', arg);
+      event.reply('FRAMES_READY', results);
     } catch (error) {
       event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
     }

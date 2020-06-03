@@ -20,7 +20,7 @@ async function unpackVideoToFrames(file, dir = "frames") {
     return {
       path: `${dir}/out%3d.jpg`,
       // TODO RETURN TOTAL NUMBER OF FRAMES HERE
-      totalFrames: 10
+      totalFrames: 460
     }
   } catch (error) {
     console.error(error);
