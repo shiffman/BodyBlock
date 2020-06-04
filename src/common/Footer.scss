@@ -24,12 +24,14 @@
 
 .footer {
   padding: 0.5rem;
-  margin-top: 2rem;
+  // margin-top: 2rem;
 
   &__list {
     display: flex;
     list-style: none;
     justify-content: space-between;
+    align-items: center;
+    height:100%;
 
     &-section {
       display: flex;
