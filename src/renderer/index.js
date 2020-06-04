@@ -148,11 +148,19 @@ class App {
         frameNum: p.nf(p.frameNum, 3, 0)
       }
 
+      // change the canvas size to match the image size
+      
+      canvas.width = img.width  // * (parentContainer.clientWidth / p.canvas.elt.width);
+      canvas.height = img.height // * (parentContainer.clientHeight / p.canvas.elt.height);
+
       // render to the preview canvas
-      var hRatio = canvas.width / p.canvas.elt.width    ;
-      var vRatio = canvas.height / p.canvas.elt.height  ;
+      var hRatio = parentContainer.clientWidth / p.canvas.elt.width    ;
+      var vRatio = parentContainer.clientHeight / p.canvas.elt.height  ;
       var ratio  = Math.min ( hRatio, vRatio );
-      ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
+      canvas.width = (canvas.width * ratio);
+      canvas.height = (canvas.height * ratio);
+      // ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
+      ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0, canvas.width, canvas.height);
       
       // send the message to the main
       ipcRenderer.send("NEW_FRAME", msg);
@@ -177,7 +185,7 @@ class App {
         ${Header()}
         <main class="main">
           <section class="main-section">
-            <h2 class="main-section__title">Add your video</h2>
+            <h2 class="main-section__title">1. Add your video</h2>
             <div class="main-section__content">
               <button
                 onclick=${this.handleFileUpload.bind(this)}
@@ -192,7 +200,7 @@ class App {
             </div>
           </section>
           <section class="main-section">
-            <h2 class="main-section__title">Blur the faces</h2>
+            <h2 class="main-section__title">2. Video Preview</h2>
             <div class="main-section__content">
               <div id="main-canvas-container">
                 <canvas id="main-canvas"></canvas>
@@ -202,7 +210,7 @@ class App {
             </div>
           </section>
           <section class="main-section">
-            <h2 class="main-section__title">Download video</h2>
+            <h2 class="main-section__title">3. Download video</h2>
             <div class="main-section__content">
               <p>status: <span>${this.status}</span></p>
               <button

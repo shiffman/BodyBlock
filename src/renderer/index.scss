@@ -26,9 +26,9 @@ body {
       border: 1px solid white;
     }
   }
-  canvas {
-    border: 1px solid white;
-  }
+  // canvas {
+  //   border: 1px solid white;
+  // }
 
   .button {
     background-color: #222;
@@ -50,9 +50,9 @@ body {
     }
   }
 
-  canvas {
-    border: 1px solid black;
-  }
+  // canvas {
+  //   border: 1px solid black;
+  // }
 
   .button {
     background-color: white;
@@ -94,21 +94,26 @@ body {
 
 
 #main-canvas-container {
-  width: 320px;
-  height: 180px;
+  min-width: 320px;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid white;
 }
-#main-canvas{
-  width:100%;
-  height:100%;
-}
+
+// #main-canvas{
+//   width:100%;
+//   height:100%;
+// }
 
 #hidden-canvas-container{
   display:none; 
 }
-#hidden-canvas{
-  width:640px;
-  height:360px;
-}
+// #hidden-canvas{
+//   width:640px;
+//   height:360px;
+// }
 
 .button {
   padding: 0.5rem 1rem;
