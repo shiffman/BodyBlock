@@ -152,11 +152,10 @@ class App {
         }
       };
 
-      console.log('hey');
       // Face-API
-      const faces = await faceapi.detectAllFaces(input);
+      console.log(img.canvas);
+      const faces = await faceapi.detectAllFaces(img.canvas);
       console.log(faces);
-
 
       // the output image
       const msg = {
