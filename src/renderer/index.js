@@ -116,9 +116,8 @@ class App {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
       
-      p.canvas.width = img.width;
-      p.canvas.height = img.height;
-
+      p.resizeCanvas(img.width, img.height);
+      
       img.loadPixels();
       const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {maxDetections:100});
       p.image(img, 0, 0);
