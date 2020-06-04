@@ -82,16 +82,24 @@ class App {
    * @param {*} p
    */
   sketch(p) {
-    p.setup = () => {
-      const parentContainer = document.querySelector("#main-canvas-container");
-      const w = parentContainer.clientWidth;
-      const h = parentContainer.clientHeight;
+    const parentContainer = document.querySelector("#main-canvas-container");
+    const canvas = parentContainer.querySelector("#main-canvas");
+    const ctx = canvas.getContext("2d");
+    
+    /**
+     * Setup
+     */
+    p.setup = () => {  
       // TODO: deal with canvas size
       p.canvas = p.createCanvas(640, 360);
+      p.canvas.id("hidden-canvas")
       p.frameNum = 1;
       p.resolution = 4;
     };
 
+    /**
+     * promisifies p5.loadImage() function
+     */
     p.loadImagePromise = (path) => {
       return new Promise((resolve, reject) => {
         // TODO: Need to account for error?
@@ -101,11 +109,17 @@ class App {
       })
     }
 
+    /**
+     * process the frame with segmentation
+     */
     p.processFrame = async (frame) => {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
+      
+      p.resizeCanvas(img.width, img.height);
+      
       img.loadPixels();
-      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas);
+      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {maxDetections:100});
       p.image(img, 0, 0);
       for (let i = 0; i < segmentation.length; i++) {
         let seg = segmentation[i];
@@ -126,10 +140,29 @@ class App {
           }
         }
       };
+
+
+      // the output image
       const msg = {
         imgb64: p.canvas.elt.toDataURL(),
         frameNum: p.nf(p.frameNum, 3, 0)
       }
+
+      // change the canvas size to match the image size
+      
+      canvas.width = img.width  // * (parentContainer.clientWidth / p.canvas.elt.width);
+      canvas.height = img.height // * (parentContainer.clientHeight / p.canvas.elt.height);
+
+      // render to the preview canvas
+      var hRatio = parentContainer.clientWidth / p.canvas.elt.width    ;
+      var vRatio = parentContainer.clientHeight / p.canvas.elt.height  ;
+      var ratio  = Math.min ( hRatio, vRatio );
+      canvas.width = (canvas.width * ratio);
+      canvas.height = (canvas.height * ratio);
+      // ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
+      ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0, canvas.width, canvas.height);
+      
+      // send the message to the main
       ipcRenderer.send("NEW_FRAME", msg);
       p.frameNum++;
     }
@@ -139,7 +172,7 @@ class App {
    * Create the p5 sketch showing the frames being blurred
    */
   createSketch() {
-    const p5Sketch = new p5(this.sketch.bind(this), "main-canvas-container");
+    const p5Sketch = new p5(this.sketch.bind(this), "hidden-canvas-container");
     return p5Sketch;
   }
 
@@ -152,7 +185,7 @@ class App {
         ${Header()}
         <main class="main">
           <section class="main-section">
-            <h2 class="main-section__title">Add your video</h2>
+            <h2 class="main-section__title">1. Add your video</h2>
             <div class="main-section__content">
               <button
                 onclick=${this.handleFileUpload.bind(this)}
@@ -167,13 +200,17 @@ class App {
             </div>
           </section>
           <section class="main-section">
-            <h2 class="main-section__title">Blur the faces</h2>
+            <h2 class="main-section__title">2. Video Preview</h2>
             <div class="main-section__content">
-              <div id="main-canvas-container"></div>
+              <div id="main-canvas-container">
+                <canvas id="main-canvas"></canvas>
+              </div>
+              <!-- this is where the p5 canvas is being drawn -->
+              <div id="hidden-canvas-container"></div>
             </div>
           </section>
           <section class="main-section">
-            <h2 class="main-section__title">Download video</h2>
+            <h2 class="main-section__title">3. Download video</h2>
             <div class="main-section__content">
               <p>status: <span>${this.status}</span></p>
               <button
@@ -188,6 +225,7 @@ class App {
         </main>
         <!-- Bottom footer -->
         ${Footer()}
+        
       </div>
     `;
     // add the DOM node to the #app
@@ -198,10 +236,9 @@ class App {
 // main app
 window.addEventListener("DOMContentLoaded", async () => {
   const bodyPix = await bp.load({
-    architecture: "MobileNetV1",
+    architecture: 'ResNet50',
     outputStride: 16,
-    multiplier: 0.75,
-    quantBytes: 2,
+    quantBytes: 4
   });
 
   const app = new App(bodyPix);
