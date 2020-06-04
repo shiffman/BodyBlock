@@ -1,44 +1,89 @@
-*, *::before, *::after{
-  margin:0;
-  padding:0;
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-html{
+html {
   font-size: 16px;
 }
 
-body{
+body {
   line-height: 1.4;
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@media (prefers-color-scheme: dark) {
+  html {
+    background-color: #222;
+    color: white;
+  }
 
+  .main {
+    &-section {
+      border: 1px solid white;
+    }
+  }
+  canvas {
+    border: 1px solid white;
+  }
 
-#app{
-  padding: 1rem;
-  height:100%;
-
+  .button {
+    background-color: #222;
+    color: white;
+    border: 1px solid white;
+    box-shadow: 2px 2px 0px white;
+  }
 }
 
-.main{
-  display:grid;
+@media (prefers-color-scheme: light) {
+  html {
+    background-color: white;
+    color: #222;
+  }
+
+  .main {
+    &-section {
+      border: 1px solid black;
+    }
+  }
+
+  canvas {
+    border: 1px solid black;
+  }
+
+  .button {
+    background-color: white;
+    color: #222;
+    border: 1px solid #222;
+    box-shadow: 2px 2px 0px #222;
+  }
+}
+
+#app {
+  padding: 1rem;
+  height: 100%;
+}
+
+.main {
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   grid-column-gap: 0.5rem;
 
-  &-section{
-    border: 1px solid black;
+  &-section {
     padding: 0.5rem;
-    height:auto;
+    height: auto;
 
-    &__title{
+    &__title {
       text-align: center;
     }
 
-    &__content{
-      width:100%;
-      height:200px;
-      max-height:100%;
+    &__content {
+      width: 100%;
+      height: 200px;
+      max-height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -47,24 +92,21 @@ body{
   }
 }
 
-canvas{
-  border: 1px solid black;
+canvas {
   height: 100%;
-  width:100%;
-}
-
-#main-canvas-container{
   width: 100%;
-  height:100%;
 }
 
-.button{
-  padding:0.5rem 1rem;
+#main-canvas-container {
+  width: 100%;
+  height: 100%;
+}
+
+.button {
+  padding: 0.5rem 1rem;
   font-size: 1.2rem;
-  border: 1px solid black;
-  box-shadow: 2px 2px 0px black;
 }
 
-input{
-  display:block;
+input {
+  display: block;
 }
