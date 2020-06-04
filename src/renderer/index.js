@@ -10,6 +10,15 @@ const bp = require("@tensorflow-models/body-pix");
 const p5 = require("p5");
 const nativeImage = require('electron').nativeImage;
 
+const faceapi = require("face-api.js");
+const FACE_MODEL_URLS = {
+  Mobilenetv1Model: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/ssd_mobilenetv1_model-weights_manifest.json",
+  TinyFaceDetectorModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/tiny_face_detector_model-weights_manifest.json",
+  FaceLandmarkModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_model-weights_manifest.json",
+  FaceLandmark68TinyNet: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_tiny_model-weights_manifest.json",
+  FaceRecognitionModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_recognition_model-weights_manifest.json",
+};
+
 
 // App components
 const Footer = require("common/Footer");
@@ -17,8 +26,6 @@ const Header = require("common/Header");
 
 // Main style
 require("./index.scss");
-
-
 
 
 /**
@@ -85,12 +92,12 @@ class App {
     const parentContainer = document.querySelector("#main-canvas-container");
     const canvas = parentContainer.querySelector("#main-canvas");
     const ctx = canvas.getContext("2d");
-    
+
     /**
      * Setup
      */
-    p.setup = () => {  
-      // TODO: deal with canvas size
+    p.setup = () => {
+      // TODO: deal with canvas size (autodetect from video file)
       p.canvas = p.createCanvas(640, 360);
       p.canvas.id("hidden-canvas")
       p.frameNum = 1;
@@ -115,11 +122,15 @@ class App {
     p.processFrame = async (frame) => {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
-      
+
       p.resizeCanvas(img.width, img.height);
-      
+
       img.loadPixels();
-      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {maxDetections:100});
+
+      // BodyPix
+      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {
+        maxDetections: 100
+      });
       p.image(img, 0, 0);
       for (let i = 0; i < segmentation.length; i++) {
         let seg = segmentation[i];
@@ -141,6 +152,11 @@ class App {
         }
       };
 
+      console.log('hey');
+      // Face-API
+      const faces = await faceapi.detectAllFaces(input);
+      console.log(faces);
+
 
       // the output image
       const msg = {
@@ -149,19 +165,19 @@ class App {
       }
 
       // change the canvas size to match the image size
-      
-      canvas.width = img.width  // * (parentContainer.clientWidth / p.canvas.elt.width);
+
+      canvas.width = img.width // * (parentContainer.clientWidth / p.canvas.elt.width);
       canvas.height = img.height // * (parentContainer.clientHeight / p.canvas.elt.height);
 
       // render to the preview canvas
-      var hRatio = parentContainer.clientWidth / p.canvas.elt.width    ;
-      var vRatio = parentContainer.clientHeight / p.canvas.elt.height  ;
-      var ratio  = Math.min ( hRatio, vRatio );
+      var hRatio = parentContainer.clientWidth / p.canvas.elt.width;
+      var vRatio = parentContainer.clientHeight / p.canvas.elt.height;
+      var ratio = Math.min(hRatio, vRatio);
       canvas.width = (canvas.width * ratio);
       canvas.height = (canvas.height * ratio);
       // ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
-      ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0, canvas.width, canvas.height);
-      
+      ctx.drawImage(p.canvas.elt, 0, 0, p.canvas.elt.width, p.canvas.elt.height, 0, 0, canvas.width, canvas.height);
+
       // send the message to the main
       ipcRenderer.send("NEW_FRAME", msg);
       p.frameNum++;
@@ -238,6 +254,11 @@ window.addEventListener("DOMContentLoaded", async () => {
     outputStride: 16,
     quantBytes: 4
   });
+
+
+  // Load FaceAPI models
+  await faceapi.nets.ssdMobilenetv1.loadFromUri(FACE_MODEL_URLS.Mobilenetv1Model);
+  await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URLS.TinyFaceDetectorModel);
 
   const app = new App(bodyPix);
   app.render();
