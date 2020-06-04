@@ -114,7 +114,18 @@ app.on('ready', () => {
   })
 
   ipcMain.on('SAVE_FILE', async (event, arg) => {
-    const results = await packVideoFromFrames(arg);
+    try {
+      const options = {
+        title:'Save your video'
+      }
+      const fname = dialog.showSaveDialogSync(mainWindow, options)
+      console.log('-------------', fname)
+      const results = await packVideoFromFrames(fname);
+      return true;
+    } catch (error) {
+      console.log(error);
+    }
+    
   });
 
 

@@ -28,13 +28,15 @@ async function unpackVideoToFrames(file, dir = "frames") {
   }
 }
 
-async function packVideoFromFrames(dir = "out-frames") {
+async function packVideoFromFrames(filepath = ".out.mp4") {
   try {
-    const command2 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i '${dir}/out%03d.jpg' .out.mp4`;
+    const dir = 'out-frames';
+    const command2 = `${__dirname}/../../node_modules/ffmpeg-static/ffmpeg -y -start_number 0 -i '${dir}/out%03d.jpg' ${filepath}.mp4`;
     const response2 = await exec(command2);
-    await exec(`mv .out.mp4 out.mp4`);
+    // TODO: still necessary if we feed in a filepath?
+    // await exec(`mv ${filepath} ${filepath}`);
     return {
-      path: 'out.mp4'
+      path: filepath
     }
   } catch (error) {
     console.error(error);
