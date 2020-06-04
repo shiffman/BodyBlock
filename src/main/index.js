@@ -116,7 +116,7 @@ app.on('ready', () => {
   ipcMain.on('SAVE_FILE', async (event, arg) => {
     try {
       const options = {
-        title:'Save your video'
+        title: 'Save your video'
       }
       const fname = dialog.showSaveDialogSync(mainWindow, options)
       console.log('-------------', fname)
@@ -125,7 +125,7 @@ app.on('ready', () => {
     } catch (error) {
       console.log(error);
     }
-    
+
   });
 
 
