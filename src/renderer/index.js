@@ -259,6 +259,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   await faceapi.nets.ssdMobilenetv1.loadFromUri(FACE_MODEL_URLS.Mobilenetv1Model);
   await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URLS.TinyFaceDetectorModel);
 
+  faceapi.env.monkeyPatch({
+    Canvas: HTMLCanvasElement,
+    Image: HTMLImageElement,
+    ImageData: ImageData,
+    Video: HTMLVideoElement,
+    createCanvasElement: () => document.createElement('canvas'),
+    createImageElement: () => document.createElement('img')
+  })
+
   const app = new App(bodyPix);
   app.render();
 });
