@@ -126,12 +126,12 @@ class App {
       p.resizeCanvas(img.width, img.height);
 
       img.loadPixels();
+      p.image(img, 0, 0);
 
       // BodyPix
       const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {
         maxDetections: 100
       });
-      p.image(img, 0, 0);
       for (let i = 0; i < segmentation.length; i++) {
         let seg = segmentation[i];
         for (let x = 0; x < img.width; x += p.resolution) {
@@ -140,7 +140,7 @@ class App {
             if (seg.data[index] == 0 || seg.data[index] == 1) {
               p.colorMode(p.RGB);
               p.noStroke();
-              p.fill(0);
+              p.fill(127);
               p.rect(x, y, p.resolution);
             } else if (seg.data[index] > 1) {
               p.colorMode(p.HSB);
@@ -153,9 +153,14 @@ class App {
       };
 
       // Face-API
-      console.log(img.canvas);
       const faces = await faceapi.detectAllFaces(img.canvas);
-      console.log(faces);
+      for (let i = 0; i < faces.length; i++) {
+        let face = faces[i];
+        p.fill(0);
+        p.noStroke();
+        p.rect(face.box.x, face.box.y, face.box.width, face.box.height);
+      }
+
 
       // the output image
       const msg = {
