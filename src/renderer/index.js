@@ -81,12 +81,13 @@ class App {
    * @param {*} p
    */
   sketch(p) {
+    const parentContainer = document.querySelector("#main-canvas-container");
+    const w = parentContainer.clientWidth;
+    const h = parentContainer.clientHeight;
     p.setup = () => {
-      const parentContainer = document.querySelector("#main-canvas-container");
-      const w = parentContainer.clientWidth;
-      const h = parentContainer.clientHeight;
+      
       // TODO: deal with canvas size
-      p.createCanvas(640, 360);
+      p.createCanvas(w, h);
     };
 
     p.loadImagePromise = (path) => {
@@ -101,21 +102,23 @@ class App {
     p.processFrame = async (frame) => {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
+      img.resize(w,h);
       img.loadPixels();
       const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas);
-      p.image(img, 0, 0);
+      p.image(img, 0, 0, w,h);
       console.log(segmentation);
       for (let i = 0; i < segmentation.length; i++) {
         let seg = segmentation[i];
-        for (let x = 0; x < img.width; x += 10) {
-          for (let y = 0; y < img.height; y += 10) {
+        const rectSize = 4;
+        for (let x = 0; x < img.width; x += rectSize) {
+          for (let y = 0; y < img.height; y += rectSize) {
             let index = x + y * img.width;
             if (seg.data[index] == 0 || seg.data[index] == 1) {
               p.fill(255, 0, 255);
-              p.rect(x, y, 10, 10);
+              p.rect(x, y, rectSize, rectSize);
             } else if (seg.data[index] > 1) {
               p.fill(0, 255, 0);
-              p.rect(x, y, 10, 10);
+              p.rect(x, y, rectSize, rectSize);
             }
           }
         }
@@ -186,10 +189,9 @@ class App {
 // main app
 window.addEventListener("DOMContentLoaded", async () => {
   const bodyPix = await bp.load({
-    architecture: "MobileNetV1",
+    architecture: 'ResNet50',
     outputStride: 16,
-    multiplier: 0.75,
-    quantBytes: 2,
+    quantBytes: 2
   });
 
   const app = new App(bodyPix);
