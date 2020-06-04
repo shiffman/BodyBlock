@@ -4,7 +4,8 @@ import {
   app,
   BrowserWindow,
   dialog,
-  ipcMain
+  ipcMain,
+  nativeImage
 } from 'electron'
 import {
   processVideo,
@@ -15,6 +16,8 @@ import * as path from 'path'
 import {
   format as formatUrl
 } from 'url'
+import fs from 'fs';
+
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -108,9 +111,20 @@ app.on('ready', () => {
     } catch (error) {
       event.reply('PROCESS_VIDEO_ERR', 'ERR OCCURRED!');
     }
-
   })
 
+  ipcMain.on('SAVE_FILE', async (event, arg) => {
+    const results = await packVideoFromFrames(arg);
+  });
 
 
+  ipcMain.on('NEW_FRAME', async (event, arg) => {
+    const img = nativeImage.createFromDataURL(arg.imgb64);
+    if (!fs.existsSync('out-frames')) {
+      fs.mkdirSync('out-frames');
+    }
+    // TODO Promisfy writeFile?
+    // TODO JPEG Quality?
+    fs.writeFileSync(`out-frames/out${arg.frameNum}.jpg`, img.toJPEG(100), () => {});
+  });
 })
