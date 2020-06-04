@@ -62,19 +62,15 @@ body {
   }
 }
 
-#app {
-  padding: 1rem;
-  height: 100%;
-}
 
-.main {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-column-gap: 0.5rem;
 
+.main{
+  display: block;
+  
   &-section {
     padding: 0.5rem;
-    height: auto;
+    height:auto;
+    width: 100%;
 
     &__title {
       text-align: center;
@@ -92,7 +88,41 @@ body {
   }
 }
 
-canvas {
+
+@media (min-width: 600px) {
+
+  .main{
+    display:grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column-gap: 0.5rem;
+
+    &-section{
+      border: 1px solid black;
+      padding: 0.5rem;
+      height:auto;
+
+      &__title{
+        text-align: center;
+      }
+
+      &__content{
+        width:100%;
+        height:200px;
+        max-height:100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+    }
+  }
+
+}
+
+
+
+canvas{
+  border: 1px solid black;
   height: 100%;
   width: 100%;
 }
