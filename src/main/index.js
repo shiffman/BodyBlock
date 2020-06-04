@@ -119,7 +119,8 @@ app.on('ready', () => {
         title:'Save your video'
       }
       const fname = dialog.showSaveDialogSync(mainWindow, options)
-      const results = await packVideoFromFrames(arg);
+      console.log('-------------', fname)
+      const results = await packVideoFromFrames(fname);
       return true;
     } catch (error) {
       console.log(error);
