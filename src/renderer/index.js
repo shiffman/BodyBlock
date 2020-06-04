@@ -83,16 +83,23 @@ class App {
    */
   sketch(p) {
     const parentContainer = document.querySelector("#main-canvas-container");
-    const w = parentContainer.clientWidth;
-    const h = parentContainer.clientHeight;
-    p.setup = () => {
-      
+    const canvas = parentContainer.querySelector("#main-canvas");
+    const ctx = canvas.getContext("2d");
+    
+    /**
+     * Setup
+     */
+    p.setup = () => {  
       // TODO: deal with canvas size
       p.canvas = p.createCanvas(640, 360);
+      p.canvas.id("hidden-canvas")
       p.frameNum = 1;
       p.resolution = 4;
     };
 
+    /**
+     * promisifies p5.loadImage() function
+     */
     p.loadImagePromise = (path) => {
       return new Promise((resolve, reject) => {
         // TODO: Need to account for error?
@@ -102,10 +109,16 @@ class App {
       })
     }
 
+    /**
+     * process the frame with segmentation
+     */
     p.processFrame = async (frame) => {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
-      // img.resize(w,h);
+      
+      p.canvas.width = img.width;
+      p.canvas.height = img.height;
+
       img.loadPixels();
       const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {maxDetections:100});
       p.image(img, 0, 0);
@@ -128,10 +141,21 @@ class App {
           }
         }
       };
+
+
+      // the output image
       const msg = {
         imgb64: p.canvas.elt.toDataURL(),
         frameNum: p.nf(p.frameNum, 3, 0)
       }
+
+      // render to the preview canvas
+      var hRatio = canvas.width / p.canvas.elt.width    ;
+      var vRatio = canvas.height / p.canvas.elt.height  ;
+      var ratio  = Math.min ( hRatio, vRatio );
+      ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
+      
+      // send the message to the main
       ipcRenderer.send("NEW_FRAME", msg);
       p.frameNum++;
     }
@@ -141,7 +165,7 @@ class App {
    * Create the p5 sketch showing the frames being blurred
    */
   createSketch() {
-    const p5Sketch = new p5(this.sketch.bind(this), "main-canvas-container");
+    const p5Sketch = new p5(this.sketch.bind(this), "hidden-canvas-container");
     return p5Sketch;
   }
 
@@ -171,7 +195,11 @@ class App {
           <section class="main-section">
             <h2 class="main-section__title">Blur the faces</h2>
             <div class="main-section__content">
-              <div id="main-canvas-container"></div>
+              <div id="main-canvas-container">
+                <canvas id="main-canvas"></canvas>
+              </div>
+              <!-- this is where the p5 canvas is being drawn -->
+              <div id="hidden-canvas-container"></div>
             </div>
           </section>
           <section class="main-section">
@@ -190,6 +218,7 @@ class App {
         </main>
         <!-- Bottom footer -->
         ${Footer()}
+        
       </div>
     `;
     // add the DOM node to the #app
