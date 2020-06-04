@@ -210,7 +210,7 @@ class App {
           </section>
           <section class="main-section">
             <h2 class="main-section__title">3. Download video</h2>
-            <div class="main-section__content">
+            <div class="main-section__content main-section__content--left">
               <button
                 onclick=${this.saveFile}
                 class="button button--save"
