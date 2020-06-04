@@ -36,6 +36,7 @@ class App {
    * @param {Object} evt
    */
   saveFile(evt) {
+    ipcRenderer.send("SAVE_FILE");
     console.log("save file!");
   }
 
@@ -87,7 +88,9 @@ class App {
     p.setup = () => {
       
       // TODO: deal with canvas size
-      p.createCanvas(w, h);
+      p.canvas = p.createCanvas(640, 360);
+      p.frameNum = 1;
+      p.resolution = 4;
     };
 
     p.loadImagePromise = (path) => {
@@ -102,27 +105,35 @@ class App {
     p.processFrame = async (frame) => {
       const image = nativeImage.createFromPath(frame);
       let img = await p.loadImagePromise(image.toDataURL());
-      img.resize(w,h);
+      // img.resize(w,h);
       img.loadPixels();
-      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas);
-      p.image(img, 0, 0, w,h);
-      console.log(segmentation);
+      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {maxDetections:100});
+      p.image(img, 0, 0);
       for (let i = 0; i < segmentation.length; i++) {
         let seg = segmentation[i];
-        const rectSize = 4;
-        for (let x = 0; x < img.width; x += rectSize) {
-          for (let y = 0; y < img.height; y += rectSize) {
+        for (let x = 0; x < img.width; x += p.resolution) {
+          for (let y = 0; y < img.height; y += p.resolution) {
             let index = x + y * img.width;
             if (seg.data[index] == 0 || seg.data[index] == 1) {
-              p.fill(255, 0, 255);
-              p.rect(x, y, rectSize, rectSize);
+              p.colorMode(p.RGB);
+              p.noStroke();
+              p.fill(0);
+              p.rect(x, y, p.resolution);
             } else if (seg.data[index] > 1) {
-              p.fill(0, 255, 0);
-              p.rect(x, y, rectSize, rectSize);
+              p.colorMode(p.HSB);
+              const br = p.map(seg.data[index], 2, 23, 0, 360);
+              p.fill(br, 100, 50);
+              p.rect(x, y, p.resolution);
             }
           }
         }
       };
+      const msg = {
+        imgb64: p.canvas.elt.toDataURL(),
+        frameNum: p.nf(p.frameNum, 3, 0)
+      }
+      ipcRenderer.send("NEW_FRAME", msg);
+      p.frameNum++;
     }
   }
 
@@ -191,7 +202,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   const bodyPix = await bp.load({
     architecture: 'ResNet50',
     outputStride: 16,
-    quantBytes: 2
+    quantBytes: 4
   });
 
   const app = new App(bodyPix);
