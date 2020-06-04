@@ -185,15 +185,14 @@ class App {
         ${Header()}
         <main class="main">
           <section class="main-section">
-            <h2 class="main-section__title">1. Add your video</h2>
-            <div class="main-section__content">
+            <h2 class="main-section__title">1. Add your video - <span id="selected-file-path">no file selected</span></h2>
+            <div class="main-section__content main-section__content--left">
               <button
                 onclick=${this.handleFileUpload.bind(this)}
                 class="button"
               >
                 Select Video 📼
               </button>
-              <p id="selected-file-path">no file selected</p>
               <button onclick=${this.processVideo.bind(this)} class="button">
                 Process →
               </button>
@@ -211,8 +210,7 @@ class App {
           </section>
           <section class="main-section">
             <h2 class="main-section__title">3. Download video</h2>
-            <div class="main-section__content">
-              <p>status: <span>${this.status}</span></p>
+            <div class="main-section__content main-section__content--left">
               <button
                 onclick=${this.saveFile}
                 class="button button--save"
