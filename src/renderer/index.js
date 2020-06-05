@@ -1,24 +1,26 @@
 // Initial welcome page. Delete the following line to remove it.
 // 'use strict';const styles=document.createElement('style');styles.innerText=`@import url(https://unpkg.com/spectre.css/dist/spectre.min.css);.empty{display:flex;flex-direction:column;justify-content:center;height:100vh;position:relative}.footer{bottom:0;font-size:13px;left:50%;opacity:.9;position:absolute;transform:translateX(-50%);width:100%}`;const vueScript=document.createElement('script');vueScript.setAttribute('type','text/javascript'),vueScript.setAttribute('src','https://unpkg.com/vue'),vueScript.onload=init,document.head.appendChild(vueScript),document.head.appendChild(styles);function init(){Vue.config.devtools=false,Vue.config.productionTip=false,new Vue({data:{versions:{electron:process.versions.electron,electronWebpack:require('electron-webpack/package.json').version}},methods:{open(b){require('electron').shell.openExternal(b)}},template:`<div><div class=empty><p class="empty-title h5">Welcome to your new project!<p class=empty-subtitle>Get qwdqwd now and take advantage of the great documentation at hand.<div class=empty-action><button @click="open('https://webpack.electron.build')"class="btn btn-primary">Documentation</button> <button @click="open('https://electron.atom.io/docs/')"class="btn btn-primary">Electron</button><br><ul class=breadcrumb><li class=breadcrumb-item>electron-webpack v{{ versions.electronWebpack }}</li><li class=breadcrumb-item>electron v{{ versions.electron }}</li></ul></div><p class=footer>This intitial landing page can be easily removed from <code>src/renderer/index.js</code>.</p></div></div>`}).$mount('#app')}
 
-const {
-  ipcRenderer
-} = require("electron");
+const { ipcRenderer } = require("electron");
 const html = require("nanohtml");
 const tf = require("@tensorflow/tfjs");
 const bp = require("@tensorflow-models/body-pix");
 const p5 = require("p5");
-const nativeImage = require('electron').nativeImage;
+const nativeImage = require("electron").nativeImage;
 
 const faceapi = require("face-api.js");
 const FACE_MODEL_URLS = {
-  Mobilenetv1Model: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/ssd_mobilenetv1_model-weights_manifest.json",
-  TinyFaceDetectorModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/tiny_face_detector_model-weights_manifest.json",
-  FaceLandmarkModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_model-weights_manifest.json",
-  FaceLandmark68TinyNet: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_tiny_model-weights_manifest.json",
-  FaceRecognitionModel: "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_recognition_model-weights_manifest.json",
+  Mobilenetv1Model:
+    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/ssd_mobilenetv1_model-weights_manifest.json",
+  TinyFaceDetectorModel:
+    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/tiny_face_detector_model-weights_manifest.json",
+  FaceLandmarkModel:
+    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_model-weights_manifest.json",
+  FaceLandmark68TinyNet:
+    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_tiny_model-weights_manifest.json",
+  FaceRecognitionModel:
+    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_recognition_model-weights_manifest.json",
 };
-
 
 // App components
 const Footer = require("common/Footer");
@@ -27,7 +29,6 @@ const Header = require("common/Header");
 // Main style
 require("./index.scss");
 
-
 /**
  * Main App Class
  */
@@ -35,7 +36,9 @@ class App {
   constructor(bodyPix) {
     this.videoPath = null;
     this.bodyPix = bodyPix;
-    this.status = "not started"; // 'not started', 'processing', 'done'
+    (this.withFaceApi = true),
+      (this.withBodyPix = true),
+      (this.status = "not started"); // 'not started', 'processing', 'done'
   }
 
   /**
@@ -69,9 +72,14 @@ class App {
 
   /**
    * Sends the command to process the video
-   * @param {*} evt 
+   * @param {*} evt
    */
   processVideo(evt) {
+    if(this.withFaceApi === false && this.withBodyPix === false){
+      alert('At least one of the blocking options must be checked -- please try again!');
+      return;
+    } 
+
     evt.preventDefault();
     ipcRenderer.send("PROCESS_VIDEO", this.videoPath);
     const sketch = this.createSketch();
@@ -99,7 +107,7 @@ class App {
     p.setup = () => {
       // TODO: deal with canvas size (autodetect from video file)
       p.canvas = p.createCanvas(640, 360);
-      p.canvas.id("hidden-canvas")
+      p.canvas.id("hidden-canvas");
       p.frameNum = 1;
       p.resolution = 4;
     };
@@ -110,11 +118,11 @@ class App {
     p.loadImagePromise = (path) => {
       return new Promise((resolve, reject) => {
         // TODO: Need to account for error?
-        p.loadImage(path, img => {
+        p.loadImage(path, (img) => {
           resolve(img);
         });
-      })
-    }
+      });
+    };
 
     /**
      * process the frame with segmentation
@@ -128,64 +136,82 @@ class App {
       img.loadPixels();
       p.image(img, 0, 0);
 
-      // BodyPix
-      const segmentation = await this.bodyPix.segmentMultiPersonParts(img.canvas, {
-        maxDetections: 100
-      });
-      for (let i = 0; i < segmentation.length; i++) {
-        let seg = segmentation[i];
-        for (let x = 0; x < img.width; x += p.resolution) {
-          for (let y = 0; y < img.height; y += p.resolution) {
-            let index = x + y * img.width;
-            if (seg.data[index] == 0 || seg.data[index] == 1) {
-              p.colorMode(p.RGB);
-              p.noStroke();
-              p.fill(127);
-              p.rect(x, y, p.resolution);
-            } else if (seg.data[index] > 1) {
-              p.colorMode(p.HSB);
-              const br = p.map(seg.data[index], 2, 23, 0, 360);
-              p.fill(br, 100, 50);
-              p.rect(x, y, p.resolution);
+      if (this.withBodyPix) {
+        // BodyPix
+        const segmentation = await this.bodyPix.segmentMultiPersonParts(
+          img.canvas,
+          {
+            maxDetections: 100,
+          }
+        );
+        for (let i = 0; i < segmentation.length; i++) {
+          let seg = segmentation[i];
+          for (let x = 0; x < img.width; x += p.resolution) {
+            for (let y = 0; y < img.height; y += p.resolution) {
+              let index = x + y * img.width;
+              if (seg.data[index] == 0 || seg.data[index] == 1) {
+                p.colorMode(p.RGB);
+                p.noStroke();
+                p.fill(127);
+                p.rect(x, y, p.resolution);
+              } else if (seg.data[index] > 1) {
+                p.colorMode(p.HSB);
+                const br = p.map(seg.data[index], 2, 23, 0, 360);
+                p.fill(br, 100, 50);
+                p.rect(x, y, p.resolution);
+              }
             }
           }
         }
-      };
-
-      // Face-API
-      const faces = await faceapi.detectAllFaces(img.canvas);
-      for (let i = 0; i < faces.length; i++) {
-        let face = faces[i];
-        p.fill(0);
-        p.noStroke();
-        p.rect(face.box.x, face.box.y, face.box.width, face.box.height);
       }
 
+      if (this.withFaceApi) {
+        // Face-API
+        const faces = await faceapi.detectAllFaces(img.canvas);
+        for (let i = 0; i < faces.length; i++) {
+          let face = faces[i];
+          p.fill(0);
+          p.noStroke();
+          p.rect(face.box.x, face.box.y, face.box.width, face.box.height);
+        }
+      }
+
+      
 
       // the output image
       const msg = {
         imgb64: p.canvas.elt.toDataURL(),
-        frameNum: p.nf(p.frameNum, 3, 0)
-      }
+        frameNum: p.nf(p.frameNum, 3, 0),
+      };
 
       // change the canvas size to match the image size
 
-      canvas.width = img.width // * (parentContainer.clientWidth / p.canvas.elt.width);
-      canvas.height = img.height // * (parentContainer.clientHeight / p.canvas.elt.height);
+      canvas.width = img.width; // * (parentContainer.clientWidth / p.canvas.elt.width);
+      canvas.height = img.height; // * (parentContainer.clientHeight / p.canvas.elt.height);
 
       // render to the preview canvas
       var hRatio = parentContainer.clientWidth / p.canvas.elt.width;
       var vRatio = parentContainer.clientHeight / p.canvas.elt.height;
       var ratio = Math.min(hRatio, vRatio);
-      canvas.width = (canvas.width * ratio);
-      canvas.height = (canvas.height * ratio);
+      canvas.width = canvas.width * ratio;
+      canvas.height = canvas.height * ratio;
       // ctx.drawImage(p.canvas.elt, 0,0, p.canvas.elt.width, p.canvas.elt.height, 0,0,p.canvas.elt.width*ratio, p.canvas.elt.height*ratio);
-      ctx.drawImage(p.canvas.elt, 0, 0, p.canvas.elt.width, p.canvas.elt.height, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(
+        p.canvas.elt,
+        0,
+        0,
+        p.canvas.elt.width,
+        p.canvas.elt.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
 
       // send the message to the main
       ipcRenderer.send("NEW_FRAME", msg);
       p.frameNum++;
-    }
+    };
   }
 
   /**
@@ -196,17 +222,51 @@ class App {
     return p5Sketch;
   }
 
+  isChecked(bool) {
+    return bool === true ? "checked" : "";
+  }
+
+  toggleChecked(key) {
+    return (evt) => {
+      this[key] = !this[key];
+    };
+  }
+
   /**
    * Render the elements to the DOM
    */
   render() {
-    const dom = html `
+    const dom = html`
       <div class="home">
         ${Header()}
         <main class="main">
           <section class="main-section">
-            <h2 class="main-section__title">1. Add your video - <span id="selected-file-path">no file selected</span></h2>
+            <h2 class="main-section__title">
+              1. Add your video -
+              <span id="selected-file-path">no file selected</span>
+            </h2>
             <div class="main-section__content main-section__content--left">
+              <div>
+                <input
+                  onchange=${this.toggleChecked("withFaceApi")}
+                  type="checkbox"
+                  name="with-faceapi"
+                  value="true"
+                  ${this.isChecked(this.withFaceApi)}
+                />
+                <label for="with-faceapi">Block face</label>
+              </div>
+              <div>
+                <input
+                  onchange=${this.toggleChecked("withBodyPix")}
+                  type="checkbox"
+                  name="with-bodypix"
+                  value="true"
+                  ${this.isChecked(this.withBodyPix)}
+                />
+                <label for="with-bodypix">Block Body?</label>
+              </div>
+
               <button
                 onclick=${this.handleFileUpload.bind(this)}
                 class="button"
@@ -243,7 +303,6 @@ class App {
         </main>
         <!-- Bottom footer -->
         ${Footer()}
-        
       </div>
     `;
     // add the DOM node to the #app
@@ -254,24 +313,27 @@ class App {
 // main app
 window.addEventListener("DOMContentLoaded", async () => {
   const bodyPix = await bp.load({
-    architecture: 'ResNet50',
+    architecture: "ResNet50",
     outputStride: 16,
-    quantBytes: 4
+    quantBytes: 4,
   });
 
-
   // Load FaceAPI models
-  await faceapi.nets.ssdMobilenetv1.loadFromUri(FACE_MODEL_URLS.Mobilenetv1Model);
-  await faceapi.nets.tinyFaceDetector.loadFromUri(FACE_MODEL_URLS.TinyFaceDetectorModel);
+  await faceapi.nets.ssdMobilenetv1.loadFromUri(
+    FACE_MODEL_URLS.Mobilenetv1Model
+  );
+  await faceapi.nets.tinyFaceDetector.loadFromUri(
+    FACE_MODEL_URLS.TinyFaceDetectorModel
+  );
 
   faceapi.env.monkeyPatch({
     Canvas: HTMLCanvasElement,
     Image: HTMLImageElement,
     ImageData: ImageData,
     Video: HTMLVideoElement,
-    createCanvasElement: () => document.createElement('canvas'),
-    createImageElement: () => document.createElement('img')
-  })
+    createCanvasElement: () => document.createElement("canvas"),
+    createImageElement: () => document.createElement("img"),
+  });
 
   const app = new App(bodyPix);
   app.render();
