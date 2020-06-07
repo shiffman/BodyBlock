@@ -1,7 +1,10 @@
 const ffmpeg = require("ffmpeg-static");
+const path = require('path');
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);
 const fs = require("fs");
+// to remove files from frames and out-frames
+const rimraf = require('rimraf');
 
 // const shellescape = require('any-shell-escape');
 // processVideo('test/Crowd-6582.mp4');
@@ -11,6 +14,14 @@ async function unpackVideoToFrames(file, dir = "frames") {
     // Make the directory
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
+    }
+
+    // clean the folder bef
+
+    rimraf.sync(`./${dir}/*`);
+
+    if (fs.existsSync('out-frames')) {
+      rimraf.sync(`./out-frames/*`);
     }
 
     // unpack frames
