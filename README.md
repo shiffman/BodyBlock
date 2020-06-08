@@ -53,3 +53,4 @@ yarn dist:dir
 ## Contributors
 * @dancigrang
 * @TheNullicorn
+* @owenmcateer
