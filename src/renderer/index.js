@@ -29,6 +29,12 @@ const Header = require("common/Header");
 // Main style
 require("./index.scss");
 
+// Loading screen
+const loadingScreen = html`
+  <div id="loadingScreen" />
+`;
+document.querySelector("#app").append(loadingScreen);
+
 /**
  * Main App Class
  */
@@ -305,8 +311,8 @@ class App {
         ${Footer()}
       </div>
     `;
-    // add the DOM node to the #app
-    document.querySelector("#app").append(dom);
+    // Replace loading screen with App
+    document.querySelector("#app #loadingScreen").replaceWith(dom);
   }
 }
 
