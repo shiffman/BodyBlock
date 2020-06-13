@@ -357,18 +357,18 @@ window.addEventListener("DOMContentLoaded", async () => {
     quantBytes: 4,
   });
 
-  const FACE_MODEL_URLS = {
-  Mobilenetv1Model:
-    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/ssd_mobilenetv1_model-weights_manifest.json",
-  TinyFaceDetectorModel:
-    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/tiny_face_detector_model-weights_manifest.json",
-  FaceLandmarkModel:
-    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_model-weights_manifest.json",
-  FaceLandmark68TinyNet:
-    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_tiny_model-weights_manifest.json",
-  FaceRecognitionModel:
-    "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_recognition_model-weights_manifest.json",
-};
+    const FACE_MODEL_URLS = {
+    Mobilenetv1Model:
+      "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/ssd_mobilenetv1_model-weights_manifest.json",
+    TinyFaceDetectorModel:
+      "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/tiny_face_detector_model-weights_manifest.json",
+    FaceLandmarkModel:
+      "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_model-weights_manifest.json",
+    FaceLandmark68TinyNet:
+      "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_landmark_68_tiny_model-weights_manifest.json",
+    FaceRecognitionModel:
+      "https://raw.githubusercontent.com/ml5js/ml5-data-and-models/face-api/models/faceapi/face_recognition_model-weights_manifest.json",
+  };
 
     // Load FaceAPI models
   await faceApi.nets.ssdMobilenetv1.loadFromUri(
