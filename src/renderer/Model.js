@@ -13,6 +13,7 @@ class Model {
 
     this.faceApi = options.faceApi || null;
     this.bodyPix = options.bodyPix || null;
+
   }
 
   toggleLoading = () => {
@@ -51,7 +52,7 @@ class Model {
         "new path must be passed, make sure to provide a file path"
       );
     this.state.videoPath = newPath;
-    this.onVideoPathChanged(newPath);
+    // this.onVideoPathChanged(newPath);
   };
 
   updateVideoName = (name) => {
@@ -67,9 +68,9 @@ class Model {
     this.onVideoNameChanged = handler;
   };
 
-  bindVideoPathChanged = (handler) => {
-    this.onVideoPathChanged = handler;
-  };
+  // bindVideoPathChanged = (handler) => {
+  //   this.onVideoPathChanged = handler;
+  // };
 
   updateStatus = (newStatus = "not started") => {
     // const {status} = this.state;
@@ -99,7 +100,7 @@ class Model {
     ipcRenderer.on("OPEN_FILE_UPLOAD", (evt, arg) => {
       console.log(arg);
       const videoPath = arg.filePaths[0];
-      const videoName = this.videoPath.split("/").slice(-1).pop();
+      const videoName = videoPath.split("/").slice(-1).pop();
 
       this.updateVideoPath(videoPath);
       this.updateVideoName(videoName);
@@ -115,27 +116,57 @@ class Model {
    * Sends the command to process the video
    * @param {*} evt
    */
-  processVideo = (evt) => {
+  handleProcessVideo = (sketch) => {
     const {withBodyPix, withFaceApi, videoPath} = this.state;
     if(withFaceApi === false && withBodyPix === false){
       alert('At least one of the blocking options must be checked -- please try again!');
       return;
     } 
 
-    evt.preventDefault();
-
     ipcRenderer.send("PROCESS_VIDEO", videoPath);
 
     // TODO  add methods below
-    // const sketch = this.createSketch();
-    // ipcRenderer.on("FRAMES_READY", async (evt, arg) => {
-    //   for (let i = 0; i < arg.totalFrames; i++) {
-    //     let num = sketch.nf(i + 1, 3, 0);
-    //     console.log(num);
-    //     await sketch.processFrame(`frames/out${num}.jpg`);
-    //   }
-    // });
+    ipcRenderer.on("FRAMES_READY", async (evt, arg) => {
+      for (let i = 0; i < arg.totalFrames; i++) {
+        let num = sketch.nf(i + 1, 3, 0);
+        console.log(num);
+        await sketch.processFrame(`frames/out${num}.jpg`, this.applyBlock);
+      }
+    });
+
   }
+
+  applyBlock = async (canvasImg) => {
+      const {withBodyPix, withFaceApi} = this.state;
+
+      const results = {
+        bodyPixSegmentation: null,
+        faceApiFaces: null
+      }
+
+      if (withBodyPix) {
+        const bodyPixOptions = {
+          maxDetections: 100,
+        }
+        // BodyPix
+        const segmentation = await this.bodyPix.segmentMultiPersonParts(
+          canvasImg,
+          bodyPixOptions
+        );
+        results.bodyPixSegmentation = segmentation;
+      }
+
+      if (withFaceApi) {
+        // Face-API
+        const faces = await this.faceApi.detectAllFaces(canvasImg);
+
+        results.faceApiFaces = faces;
+      }
+
+      return results;
+  }
+
+  
 }
 
 module.exports = Model;

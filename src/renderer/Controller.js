@@ -13,7 +13,10 @@ class Controller {
     // select video
     this.view.bindSelectVideoHandler(this.handleSelectVideo);
     this.model.bindVideoNameChanged(this.updateVideoName);
+    
     // TODO process video
+    this.view.bindProcessVideoHandler(this.handleProcessVideo);
+    // this.model.bindVideoPathChanged(this.updateVideoPath);
 
     // save button
     this.view.bindSaveVideoHandler(this.handleSaveVideo);
@@ -71,6 +74,10 @@ class Controller {
 
   handleSaveVideo = () => {
     this.model.handleSaveVideo();
+  }
+
+  handleProcessVideo = (sketch) => {
+    this.model.handleProcessVideo(sketch);
   }
 
 }
