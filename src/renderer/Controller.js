@@ -3,20 +3,23 @@ class Controller {
     this.model = model;
     this.view = view;
 
-
+    // toggle checkbox - bodypix
     this.view.bindToggleWithBodyPix(this.toggleWithBodyPix);
+    this.model.bindBodyPixInputChanged(this.updateBodyPixChecked);
+    // toggle checkbox - faceapi
     this.view.bindToggleWithFaceApi(this.toggleWithFaceApi);
+    this.model.bindFaceApiInputChanged(this.updateFaceApiChecked)
 
     // select video
     this.view.bindSelectVideoHandler(this.handleSelectVideo);
+    this.model.bindVideoNameChanged(this.updateVideoName);
     // TODO process video
 
     // save button
     this.view.bindSaveVideoHandler(this.handleSaveVideo);
-
-    this.model.bindBodyPixInputChanged(this.updateBodyPixChecked)
-    this.model.bindFaceApiInputChanged(this.updateFaceApiChecked)
-    this.model.bindVideoNameChanged(this.updateVideoName);
+    
+    // changes the status of video processing
+    this.model.bindVideoProcessingStatusChanged(this.updateVideoProcessingStatus);
 
     // initialize UI with model state
     this.init()
@@ -26,6 +29,7 @@ class Controller {
     this.updateFaceApiChecked();
     this.updateBodyPixChecked();
     this.updateVideoName(this.model.state.videoName);
+    this.updateVideoProcessingStatus(this.model.state.status);
   }
 
   toggleWithBodyPix = () => {
@@ -47,6 +51,10 @@ class Controller {
 
   updateVideoName = (name) => {
     this.view.updateVideoFileName(name);
+  }
+
+  updateVideoProcessingStatus = (status) => {
+    this.view.updateVideoProcessingStatus(status);
   }
 
   handleLoadingEvent = () => {

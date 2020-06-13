@@ -79,7 +79,12 @@ class Model {
       );
 
     this.state.status = newStatus;
+    this.onVideoProcessingStatusChanged(newStatus);
   };
+
+  bindVideoProcessingStatusChanged = (handler) => {
+    this.onVideoProcessingStatusChanged = handler;
+  }
 
   /**
    * Callback function that handles the file upload
@@ -105,6 +110,32 @@ class Model {
     ipcRenderer.send("SAVE_FILE");
     console.log("save file!");
   };
+
+  /**
+   * Sends the command to process the video
+   * @param {*} evt
+   */
+  processVideo = (evt) => {
+    const {withBodyPix, withFaceApi, videoPath} = this.state;
+    if(withFaceApi === false && withBodyPix === false){
+      alert('At least one of the blocking options must be checked -- please try again!');
+      return;
+    } 
+
+    evt.preventDefault();
+
+    ipcRenderer.send("PROCESS_VIDEO", videoPath);
+
+    // TODO  add methods below
+    // const sketch = this.createSketch();
+    // ipcRenderer.on("FRAMES_READY", async (evt, arg) => {
+    //   for (let i = 0; i < arg.totalFrames; i++) {
+    //     let num = sketch.nf(i + 1, 3, 0);
+    //     console.log(num);
+    //     await sketch.processFrame(`frames/out${num}.jpg`);
+    //   }
+    // });
+  }
 }
 
 module.exports = Model;
