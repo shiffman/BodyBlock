@@ -31,6 +31,14 @@ class View {
 
     this.processVideoButton = html`
       <button>Process Video</button>
+    `;
+
+    this.videoFileName = html`
+      <p></p>
+    `;
+
+    this.saveVideoButton = html`
+    <button id="save-button"> Save 💾</button>
     `
 
 
@@ -50,8 +58,10 @@ class View {
         <main class="main">
           ${this.inputWithBodyPix}
           ${this.inputWithFaceApi}
-          ${this.processVideoButton}
           ${this.selectVideoButton}
+          ${this.processVideoButton}
+          ${this.videoFileName}
+          ${this.saveVideoButton}
         </main>
         ${this.Footer}
       </div>
@@ -89,6 +99,17 @@ class View {
       evt.preventDefault();
       handler();
     })
+  }
+
+  bindSaveVideoHandler = (handler) => {
+    this.saveVideoButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      handler();
+    })
+  }
+
+  updateVideoFileName = (name) => {
+    this.videoFileName.textContent = name;
   }
 
 }
