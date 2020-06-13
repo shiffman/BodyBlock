@@ -7,6 +7,8 @@ class Controller {
     this.view.bindToggleWithBodyPix(this.toggleWithBodyPix);
     this.view.bindToggleWithFaceApi(this.toggleWithFaceApi);
 
+    this.view.bindSelectVideoHandler(this.handleSelectVideo);
+
     this.model.bindBodyPixInputChanged(this.updateBodyPixChecked)
     this.model.bindFaceApiInputChanged(this.updateFaceApiChecked)
 
@@ -24,11 +26,11 @@ class Controller {
 
 
   updateFaceApiChecked = (bool) => {
-    this.view.updateChecked('faceApi',bool)
+    this.view.updateChecked('faceApi', bool)
   }
 
   updateBodyPixChecked = (bool) => {
-    this.view.updateChecked('bodyPix',bool)
+    this.view.updateChecked('bodyPix', bool)
   }
 
   handleLoadingEvent = () => {
@@ -37,6 +39,10 @@ class Controller {
 
   handleUpdateStatus = (newStatus = "not started") => {
     this.model.updateStatus(newStatus);
+  }
+
+  handleSelectVideo = () => {
+    this.model.handleFileUpload()
   }
 
 }

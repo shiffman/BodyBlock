@@ -3,36 +3,7 @@ const Footer = require("../common/Footer.js");
 const Header = require("../common/Header.js");
 require("./index.scss");
 
-// const VideoOptionsMenu = () => {
-//   return html`
-//     <div>
-//       <div>
-//         <input
-//           onchange=${this.toggleChecked("withFaceApi")}
-//           type="checkbox"
-//           name="with-faceapi"
-//           value="true"
-//           ${this.isChecked(this.withFaceApi)}
-//         />
-//         <label for="with-faceapi">Block face</label>
-//       </div>
-//       <div>
-//         <input
-//           onchange=${this.toggleChecked("withBodyPix")}
-//           type="checkbox"
-//           name="with-bodypix"
-//           value="true"
-//           ${this.isChecked(this.withBodyPix)}
-//         />
-//         <label for="with-bodypix">Block Body?</label>
-//       </div>
-//     </div>
-//   `;
-// };
 
-const Main = () => {
-  return html` <main class="main"></main> `;
-};
 
 class View {
   constructor() {
@@ -54,6 +25,15 @@ class View {
       </div>
     `;
 
+    this.selectVideoButton = html`
+      <button>Select Video</button>
+    `;
+
+    this.processVideoButton = html`
+      <button>Process Video</button>
+    `
+
+
     // initialize
     this.init();
   }
@@ -70,6 +50,8 @@ class View {
         <main class="main">
           ${this.inputWithBodyPix}
           ${this.inputWithFaceApi}
+          ${this.processVideoButton}
+          ${this.selectVideoButton}
         </main>
         ${this.Footer}
       </div>
@@ -77,15 +59,14 @@ class View {
   }
 
   updateChecked = (model, bool) => {
-    console.log(bool)
-    const checked =  bool === true ? "checked" :'';
+    const checkedOr =  bool === true ? "checked" :'';
 
     if(model === 'faceApi'){
-      this.inputWithFaceApi.querySelector('input').setAttribute("checked", checked);
+      this.inputWithFaceApi.querySelector('input').setAttribute("checked", checkedOr);
     }
 
     if(model === 'bodyPix'){
-      this.inputWithBodyPix.querySelector('input').setAttribute("checked", checked);
+      this.inputWithBodyPix.querySelector('input').setAttribute("checked", checkedOr);
     }
 
   }
@@ -103,6 +84,12 @@ class View {
     });
   }
 
+  bindSelectVideoHandler = (handler) => {
+    this.selectVideoButton.addEventListener('click', (evt) => {
+      evt.preventDefault();
+      handler();
+    })
+  }
 
 }
 

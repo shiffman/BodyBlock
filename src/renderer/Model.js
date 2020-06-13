@@ -1,12 +1,18 @@
+const { ipcRenderer } = require("electron");
+
 class Model {
-  constructor() {
+  constructor(options = {}) {
     this.state = {
       videoPath: "",
+      videoName: "",
       loading: false,
       status: "not started", // 'processing', 'done'
       withBodyPix: true,
       withFaceApi: true,
     };
+
+    this.faceApi = options.faceApi || null;
+    this.bodyPix = options.bodyPix || null;
   }
 
   updateVideoPath = (newPath) => {
@@ -52,6 +58,31 @@ class Model {
 
     this.state.status = newStatus;
   };
+
+
+    /**
+   * Callback function that handles the file upload
+   * @param {Object} evt
+   */
+  handleFileUpload = () => {
+
+    // use the ipcRenderer object to pass messages to ipcMain
+    // OPEN_FILE_UPLOAD will open up a dialog to select a file
+    ipcRenderer.send("OPEN_FILE_UPLOAD");
+
+    // We listen for a response with the filePath
+    ipcRenderer.on("OPEN_FILE_UPLOAD", (evt, arg) => {
+      console.log(arg);
+      this.videoPath = arg.filePaths[0];
+      this.videoName = this.videoPath.split("/").slice(-1).pop();
+      // TODO - update the dom with the textContent
+      // handler(this.videoName)
+      // document.querySelector("#selected-file-path").textContent = filename;
+    });
+  }
+
+
+
 }
 
 module.exports = Model;
