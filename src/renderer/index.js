@@ -2,8 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import App from './App';
+import ContextProviders from '../common/Context';
 
-ReactDOM.render(<App/>, document.querySelector("#app"));
+
+ReactDOM.render(
+  <ContextProviders>
+    <App/>
+  </ContextProviders>, 
+  document.querySelector("#app"));
 
 
 // // Initial welcome page. Delete the following line to remove it.
