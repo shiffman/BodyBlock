@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-
+const { ipcRenderer } = require("electron");
 import { MenuContext } from "./Context";
 
 import "./DashboardSideBar.scss";
@@ -17,6 +17,21 @@ const DashboardSidebar = () => {
   const setChecked = (bool) => {
     return bool === true ? "checked" : "";
   };
+
+  const handleSelectVideo = (evt) => {
+      evt.preventDefault();
+      // use the ipcRenderer object to pass messages to ipcMain
+      // OPEN_FILE_UPLOAD will open up a dialog to select a file
+      ipcRenderer.send("OPEN_FILE_UPLOAD");
+      
+      ipcRenderer.on("OPEN_FILE_UPLOAD", (evt, arg) => {
+          console.log(arg);
+          const videoPath = arg.filePaths[0];
+          const videoName = videoPath.split("/").slice(-1).pop();
+          setMenu({ ...menu, videoPath, videoName });
+      });
+  }
+
 
   // TODO: make a nice menu bar
   return (
@@ -42,8 +57,8 @@ const DashboardSidebar = () => {
         </div>
       </section>
       <section className="section">
-        <p className="section__description">Select a video: none selected yet</p>
-        → <button>Select Video</button>
+  <p className="section__description">Select a video: {menu.videoName !== null ? menu.videoName : "none selected yet" }</p>
+        → <button onClick={handleSelectVideo}>Select Video</button>
       </section>
       <section className="section">
         <p className="section__description">Process the video: this may take a while</p>

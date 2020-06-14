@@ -10,6 +10,8 @@ export const MenuProvider = ({ children }) => {
   const initialState = {
     withBodyPix: true,
     withFaceApi: true,
+    videoPath: null,
+    videoName: null,
   };
 
   // menu is now our state object
