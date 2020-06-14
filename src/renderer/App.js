@@ -2,13 +2,16 @@ import React, { createContext } from "react";
 
 import Footer from "common/Footer";
 import Header from "common/Header";
-import MenuBar from "common/MenuBar";
+import Dashboard from "common/Dashboard";
+
+import "./App.scss";
+
+
 
 const App = () => {
   return (
-    <div>
-      <MenuBar/>
-
+    <div className="App">
+      <Dashboard />
       <Footer />
     </div>
   );

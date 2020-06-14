@@ -15,138 +15,139 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    background-color: #222;
-    color: white;
-  }
 
-  .main {
-    &-section {
-      border: 1px solid white;
-    }
-  }
-  // canvas {
-  //   border: 1px solid white;
-  // }
+// @media (prefers-color-scheme: dark) {
+//   html {
+//     background-color: #222;
+//     color: white;
+//   }
 
-  .button {
-    background-color: #222;
-    color: white;
-    border: 1px solid white;
-    box-shadow: 2px 2px 0px white;
-  }
-}
+//   .main {
+//     &-section {
+//       border: 1px solid white;
+//     }
+//   }
+//   // canvas {
+//   //   border: 1px solid white;
+//   // }
 
-@media (prefers-color-scheme: light) {
-  html {
-    background-color: white;
-    color: #222;
-  }
+//   .button {
+//     background-color: #222;
+//     color: white;
+//     border: 1px solid white;
+//     box-shadow: 2px 2px 0px white;
+//   }
+// }
 
-  .main {
-    &-section {
-      border: 1px solid black;
-    }
-  }
+// @media (prefers-color-scheme: light) {
+//   html {
+//     background-color: white;
+//     color: #222;
+//   }
 
-  // canvas {
-  //   border: 1px solid black;
-  // }
+//   .main {
+//     &-section {
+//       border: 1px solid black;
+//     }
+//   }
 
-  .button {
-    background-color: white;
-    color: #222;
-    border: 1px solid #222;
-    box-shadow: 2px 2px 0px #222;
-  }
-}
+//   // canvas {
+//   //   border: 1px solid black;
+//   // }
 
-#app {
-  padding: 1rem;
-  height: 100vh;
-}
+//   .button {
+//     background-color: white;
+//     color: #222;
+//     border: 1px solid #222;
+//     box-shadow: 2px 2px 0px #222;
+//   }
+// }
 
-.home{
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-rows:6rem 1fr auto;
-  grid-row-gap: 1rem;
-}
+// #app {
+//   padding: 1rem;
+//   height: 100vh;
+// }
 
-.main {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr auto;
-  grid-row-gap:0.5rem;
-
-  &-section {
-    padding: 0.5rem;
-    height: auto;
-
-    &__title {
-      text-align: left;
-      margin-bottom:0.5rem;
-    }
-
-    &__content {
-      width: 100%;
-      // height: 200px;
-      // height:100%;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-
-      &--left{
-
-        justify-content: flex-start;
-      }
-    }
-  }
-}
-
-
-#main-canvas-container {
-  min-width: 320px;
-  min-height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid white;
-}
-
-// #main-canvas{
+// .home{
 //   width:100%;
 //   height:100%;
+//   display:grid;
+//   grid-template-rows:6rem 1fr auto;
+//   grid-row-gap: 1rem;
 // }
 
-#hidden-canvas-container{
-  display:none; 
-}
-// #hidden-canvas{
-//   width:640px;
-//   height:360px;
+// .main {
+//   display: grid;
+//   grid-template-columns: 1fr;
+//   grid-template-rows: auto 1fr auto;
+//   grid-row-gap:0.5rem;
+
+//   &-section {
+//     padding: 0.5rem;
+//     height: auto;
+
+//     &__title {
+//       text-align: left;
+//       margin-bottom:0.5rem;
+//     }
+
+//     &__content {
+//       width: 100%;
+//       // height: 200px;
+//       // height:100%;
+//       display: flex;
+//       flex-direction: row;
+//       justify-content: center;
+//       align-items: center;
+
+//       &--left{
+
+//         justify-content: flex-start;
+//       }
+//     }
+//   }
 // }
 
-.button {
-  padding: 0.15rem 1rem;
-  font-size: 0.8rem;
-  height:2.5rem;
+
+// #main-canvas-container {
+//   min-width: 320px;
+//   min-height: 180px;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border: 1px solid white;
+// }
+
+// // #main-canvas{
+// //   width:100%;
+// //   height:100%;
+// // }
+
+// #hidden-canvas-container{
+//   display:none; 
+// }
+// // #hidden-canvas{
+// //   width:640px;
+// //   height:360px;
+// // }
+
+// .button {
+//   padding: 0.15rem 1rem;
+//   font-size: 0.8rem;
+//   height:2.5rem;
   
 
-  &:not(:last-child){
-    margin-right:0.5rem;
-  }
+//   &:not(:last-child){
+//     margin-right:0.5rem;
+//   }
 
-  &:hover{
-    background-color:yellow;
-    color:#222;
-  }
-}
+//   &:hover{
+//     background-color:yellow;
+//     color:#222;
+//   }
+// }
 
-#loadingScreen {
-  background: url(../common/loading.svg) no-repeat center center;
-  height: 100%;
-}
+// #loadingScreen {
+//   background: url(../common/loading.svg) no-repeat center center;
+//   height: 100%;
+// }
