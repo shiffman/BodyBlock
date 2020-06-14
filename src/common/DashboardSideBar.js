@@ -21,36 +21,37 @@ const DashboardSidebar = () => {
   // TODO: make a nice menu bar
   return (
     <div className="DashboardSideBar">
-      <h2>options</h2>
-      <section>
-        <div>
-          <label>Block Face + Body - {String(menu.withBodyPix)}</label>
+      <section className="section">
+        <p className="section__description">Select Auto-Blocking Methods</p>
+        <div className="checkbox-row">
           <input
             type="checkbox"
             onChange={handleChange("withBodyPix")}
             checked={setChecked(menu.withBodyPix)}
           />
+          <label>Block Face + Body - {String(menu.withBodyPix)}</label>
         </div>
-        <div>
-          <label>Block Face Only - {String(menu.withFaceApi)}</label>
+        <div className="checkbox-row">
+          
           <input
             type="checkbox"
             onChange={handleChange("withFaceApi")}
             checked={setChecked(menu.withFaceApi)}
           />
+          <label>Block Face Only - {String(menu.withFaceApi)}</label>
         </div>
       </section>
-      <section>
-        <p>Select a video: none selected yet</p>
-        <button>Select Video</button>
+      <section className="section">
+        <p className="section__description">Select a video: none selected yet</p>
+        → <button>Select Video</button>
       </section>
-      <section>
-        <p>Process the video: this may take a while</p>
-        <button>Process Video</button>
+      <section className="section">
+        <p className="section__description">Process the video: this may take a while</p>
+        → <button>Process Video</button>
       </section>
-      <section>
-        <p>Output the video</p>
-        <button>Save Video</button>
+      <section className="section">
+        <p className="section__description">Output the video</p>
+        → <button>Save Video</button>
       </section>
     </div>
   );

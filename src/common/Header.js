@@ -5,8 +5,9 @@ require('./Header.scss');
 const Header = () => {
   return (
     <header className="header">
-      <h1>BodyBlock</h1>
-      <p>A tool to blur out peoples' faces in video</p>
+      <ul className="header__list">
+        <li className="header__logo"><a>BodyBlock</a></li>
+      </ul>
     </header>
   );
 };

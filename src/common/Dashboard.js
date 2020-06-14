@@ -6,7 +6,7 @@ import "./Dashboard.scss";
 
 const Dashboard = () => {
   return (
-    <div className="Dashboard">
+      <div className="Dashboard">
         <DashboardSidebar/> 
         <main class="main"></main>
       </div>

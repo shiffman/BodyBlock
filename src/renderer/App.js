@@ -11,6 +11,7 @@ import "./App.scss";
 const App = () => {
   return (
     <div className="App">
+      <Header />
       <Dashboard />
       <Footer />
     </div>

@@ -1,4 +1,32 @@
 .DashboardSideBar{
-  border: 1px solid black;
-  padding:0.5rem;
+  padding:0.5rem 1rem;
+  border-radius: 4px;
+  background-color: #202442;
+
+  color:white;
+
+  
+  .section{
+    font-size: 0.9rem;
+    &:not(:last-child){
+      margin-bottom:1rem;
+    }
+
+    &__description{
+      font-weight: bold;
+      color:#777EB3;
+      font-size: 0.8rem;
+    }
+  }
+
+  
+}
+
+.checkbox-row{
+  display:flex;
+  align-items: center;
+
+  input{
+    margin-right: 0.25rem;
+  }
 }
