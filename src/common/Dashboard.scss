@@ -1,0 +1,12 @@
+.Dashboard {
+  display:grid;
+  grid-template-columns: 1fr 3fr;
+  grid-column-gap: 0.35rem;
+  height:100%;
+  padding:1rem;
+}
+
+.main{
+  border: 2px solid #777EB3;
+  border-radius: 4px;
+}

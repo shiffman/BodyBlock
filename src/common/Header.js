@@ -1,14 +1,15 @@
-const html = require('nanohtml');
+import React from 'react';
 
 require('./Header.scss');
 
 const Header = () => {
-  return html`
-    <header class="header">
-      <h1>BodyBlock</h1>
-      <p>A tool to blur out peoples' faces in video</p>
+  return (
+    <header className="header">
+      <ul className="header__list">
+        <li className="header__logo"><a>BodyBlock</a></li>
+      </ul>
     </header>
-  `;
+  );
 };
 
-module.exports = Header;
+export default Header;
